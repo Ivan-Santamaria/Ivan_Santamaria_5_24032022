@@ -17,14 +17,22 @@ fetch(`http://localhost:3000/api/products/${productId}`)
     let product = res;
     console.log(product);
     // product.name; √
-    // product.imageUrl;
+    // product.imageUrl; √
     // product.price; √
     // product.description; √
-    // product.colors;
-    // product.altTxt;
+    // product.colors; 
+    // product.altTxt; √
     document.getElementById(`description`).innerHTML = product.description;
     document.getElementById(`title`).innerHTML = product.name;
     document.getElementById(`price`).innerHTML = product.price;
+
+    let productImage = document.createElement("img");
+    let imageLoc = document.querySelector(`article div`);
+    productImage.src = product.imageUrl;
+    productImage.alt = product.altTxt;
+    imageLoc.appendChild(productImage);
+    console.log(productImage);
+
     // l'afficher
   });
 //   .catch((error) => alert(`Erreur lors du chargement de l'API`));
