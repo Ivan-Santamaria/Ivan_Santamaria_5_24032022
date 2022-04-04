@@ -25,10 +25,6 @@ fetch(`http://localhost:3000/api/products/${productId}`)
     document.getElementById(`description`).innerHTML = product.description;
     document.getElementById(`title`).innerHTML = product.name;
     document.getElementById(`price`).innerHTML = product.price;
-    // document.getElementsByTagName("option").innerHTML = product.colors;
-    let imageOfProduct = document.createElement(`img`);
-    imageOfProduct.src = product.imageUrl;
-    imageOfProduct.alt = product.altTxt;
-    console.log();
+    // l'afficher
   });
 //   .catch((error) => alert(`Erreur lors du chargement de l'API`));
