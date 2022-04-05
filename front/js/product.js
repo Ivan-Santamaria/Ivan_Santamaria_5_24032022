@@ -15,16 +15,18 @@ fetch(`http://localhost:3000/api/products/${productId}`)
   .then((res) => res.json())
   .then(function (res) {
     let product = res;
-    console.log(product);
-    // product.name; √
-    // product.imageUrl; √
-    // product.price; √
-    // product.description; √
-    // product.colors; 
-    // product.altTxt; √
+
     document.getElementById(`description`).innerHTML = product.description;
     document.getElementById(`title`).innerHTML = product.name;
     document.getElementById(`price`).innerHTML = product.price;
+
+    product.colors.forEach((color) => {
+      let colorOptionSelector = document.createElement(`option`);
+      colorOptionSelector.value = color;
+      colorOptionSelector.textContent = color;
+
+      document.getElementById(`colors`).appendChild(colorOptionSelector);
+    });
 
     let productImage = document.createElement("img");
     let imageLoc = document.querySelector(`article div`);
@@ -34,5 +36,11 @@ fetch(`http://localhost:3000/api/products/${productId}`)
     console.log(productImage);
 
     // l'afficher
-  });
-//   .catch((error) => alert(`Erreur lors du chargement de l'API`));
+  })
+  .catch((error) => alert(`Erreur lors du chargement de l'API`));
+
+
+  // Creer une ecoute d'evenement sur le bouton ajouter au panier
+  // au clic (Ajouter au panier) verifier si une couleur est selectionée, envoyer une alerte lorsque aucune couleur n'est secelctionée.
+  // verifier si la quantité est valide, envoyer une alerte si non-valide
+  // En cas de validation couleur/quantité: (recherche utilisation local storage)
