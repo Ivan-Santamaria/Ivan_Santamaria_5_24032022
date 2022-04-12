@@ -16,6 +16,8 @@ fetch(`http://localhost:3000/api/products/${productId}`)
   .then(function (res) {
     let product = res;
 
+    // console.log("res:", res);
+
     document.getElementById(`description`).innerHTML = product.description;
     document.getElementById(`title`).innerHTML = product.name;
     document.getElementById(`price`).innerHTML = product.price;
@@ -33,14 +35,41 @@ fetch(`http://localhost:3000/api/products/${productId}`)
     productImage.src = product.imageUrl;
     productImage.alt = product.altTxt;
     imageLoc.appendChild(productImage);
-    console.log(productImage);
-
     // l'afficher
+
+    document.getElementById(`addToCart`).addEventListener("click", function () {
+      addToCart(product);
+    });
   })
+  // .then( )
   .catch((error) => alert(`Erreur lors du chargement de l'API`));
 
+function addToCart(product) {
+  // code d'ajout au panier
+  // Verifier la quantité entre 1-100
+  // Verifier la couleur
+  console.log(product);
 
-  // Creer une ecoute d'evenement sur le bouton ajouter au panier
-  // au clic (Ajouter au panier) verifier si une couleur est selectionée, envoyer une alerte lorsque aucune couleur n'est secelctionée.
-  // verifier si la quantité est valide, envoyer une alerte si non-valide
-  // En cas de validation couleur/quantité: (recherche utilisation local storage)
+  let colorSelector = document.getElementById(`colors`);
+  let quantitySelector = document.getElementById(`quantity`);
+
+  if (colorSelector.value == "" || colorSelector.value == undefined) {
+    alert("Veuillez sélectionner une couleur disponible!");
+  } else if (quantitySelector.value < 1 || quantitySelector.value > 100) {
+    alert("Veuillez sélectionner une quantité comprise entre 1 et 100");
+  } else {
+    document.getElementById("addToCart").innerText =
+      "Article(s) ajouté(s) au panier";
+
+    //---------------------------------------- Local Storage ----------------------------------------
+
+    // let productInLocalStorage = JSON.parse(localStorage.getItem(`product`));
+
+
+  } //---------------------------------------- Local Storage ----------------------------------------
+}
+
+// Creer une ecoute d'evenement sur le bouton ajouter au panier
+// au clic (Ajouter au panier) verifier si une couleur est selectionée, envoyer une alerte lorsque aucune couleur n'est secelctionée.
+// verifier si la quantité est valide, envoyer une alerte si non-valide
+// En cas de validation couleur/quantité: (recherche utilisation local storage)
