@@ -106,7 +106,7 @@ function addToCart(product) {
       "Article(s) ajouté(s) au panier";
     setTimeout(function () {
       document.getElementById("addToCart").innerText = "Ajouter au panier";
-    }, 2000);
+    }, 750);
   }
 }
 
