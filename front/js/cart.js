@@ -7,6 +7,7 @@ if (fullCart === null) {
   document.getElementById("cart__items").innerText =
     "Votre panier est vide :( ";
 } else {
+  calculateProductPriceInCart();
   fullCart.forEach((cartProductDetails) => {
     fetch("http://localhost:3000/api/products/" + cartProductDetails.productId)
       // on demande une reponse deséléments au format json
@@ -81,9 +82,73 @@ if (fullCart === null) {
         deleteItem.textContent = " Supprimer";
         deleteItemContainer.appendChild(deleteItem);
 
-        // console.log("cartProductDetails:", cartProductDetails);
-        // console.log("cartItems:", cartItems);
+        updateProductQuantity(
+          cartItemQuantitySelection,
+          cartProductDetails.productId
+        );
+        calculateProductQuantityInCart();
       });
   });
   //   .catch((error) => alert(`Erreur lors du chargement de l'API`));
 }
+function updateProductQuantity(cartItemQuantitySelection, productId) {
+  cartItemQuantitySelection.addEventListener("change", function () {
+    // console.log(cartItemQuantitySelection.value);
+    let productQuantity = cartItemQuantitySelection.value;
+    fullCart.forEach((cartProductDetails, key) => {
+      // console.log("key:", key);
+
+      if (cartProductDetails.productId == productId) {
+        fullCart[key]["productQuantity"] = productQuantity;
+        localStorage.setItem("product", JSON.stringify(fullCart));
+        fullCart = JSON.parse(localStorage.getItem("product"));
+      }
+    });
+    calculateProductQuantityInCart();
+    calculateProductPriceInCart();
+  });
+}
+
+function calculateProductQuantityInCart() {
+  let totalProductQuantity = 0;
+  let totalQuantityInCart = document.getElementById("totalQuantity");
+  // faire un foreach sur fullCart et pour chaque produit dans le panier
+  fullCart = JSON.parse(localStorage.getItem("product"));
+  fullCart.forEach((cartProductDetails, key) => {
+    totalProductQuantity =
+      totalProductQuantity + parseInt(cartProductDetails["productQuantity"]);
+  });
+
+  // Mise a Jour de la quantité
+  totalQuantityInCart.innerHTML = totalProductQuantity;
+  console.log("totalProductQuantity:", totalProductQuantity);
+}
+
+function calculateProductPriceInCart() {
+  let totalProductPrice = 0;
+  let totalProductPriceInCart = document.getElementById("totalPrice");
+  // faire un foreach sur fullCart et pour chaque produit dans le panier
+  fullCart = JSON.parse(localStorage.getItem("product"));
+  fullCart.forEach((cartProductDetails, key) => {
+    fetch("http://localhost:3000/api/products/" + cartProductDetails.productId)
+      // on demande une reponse deséléments au format json
+      .then((res) => res.json())
+      // ON recupère la reponse (tableau de produits)
+      .then((res) => {
+        let product = res;
+
+        totalProductPrice =
+          totalProductPrice +
+          parseInt(cartProductDetails["productQuantity"]) *
+            parseInt(product.price);
+        // Affichage du montant total
+        totalProductPriceInCart.innerHTML = totalProductPrice;
+        console.log(totalProductPrice);
+      });
+  });
+}
+
+// faire une fontion pour calculer le prix total,
+// fullCart.forEach((cartProductDetails) => {
+//   fetch("http://localhost:3000/api/products/" + cartProductDetails.productId)
+// valeur du produit +
