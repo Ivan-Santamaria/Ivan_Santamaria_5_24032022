@@ -82,6 +82,8 @@ if (fullCart === null) {
         deleteItem.textContent = " Supprimer";
         deleteItemContainer.appendChild(deleteItem);
 
+        deleteProduct(deleteItem);
+
         updateProductQuantity(
           cartItemQuantitySelection,
           cartProductDetails.productId
@@ -143,12 +145,33 @@ function calculateProductPriceInCart() {
             parseInt(product.price);
         // Affichage du montant total
         totalProductPriceInCart.innerHTML = totalProductPrice;
-        console.log(totalProductPrice);
+        console.log("totalProductPrice:", totalProductPrice);
+
+        // Essayer de garder uniquement le resultat final
       });
   });
 }
 
-// faire une fontion pour calculer le prix total,
-// fullCart.forEach((cartProductDetails) => {
-//   fetch("http://localhost:3000/api/products/" + cartProductDetails.productId)
-// valeur du produit +
+function deleteProduct(deleteItem) {
+  deleteItem.addEventListener("click", () => {
+    console.log("Test Event");
+    let cartItemSelector =
+      deleteItem.parentNode.parentNode.parentNode.parentNode;
+    let productId = cartItemSelector.getAttribute("data-id");
+    let productColor = cartItemSelector.getAttribute("data-color");
+    fullCart = JSON.parse(localStorage.getItem("product"));
+
+    fullCart.forEach((cartProductDetails, key) => {
+      if (
+        cartProductDetails.productId == productId &&
+        cartProductDetails.productColor == productColor
+      ) {
+        fullCart.splice(key, 1);
+      }
+    });
+    localStorage.setItem("product", JSON.stringify(fullCart));
+    // Appliquer une fonction sur la variable cartItemSelector afin de supprimer l'element l'article du Dom
+  });
+}
+
+// Faire des recherches sur les expressions régulières(RegExp) en js
