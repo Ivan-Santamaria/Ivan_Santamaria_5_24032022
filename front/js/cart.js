@@ -274,7 +274,7 @@ const validLastName = function (inputLastName) {
     lastNameMsg.style.color = "#00B600";
     lastNameMsg.style.textShadow = "0px 0px 3px black";
   } else {
-    lastNameMsg.innerHTML = `&#10060;` + " Veuillez renseigner un prénom";
+    lastNameMsg.innerHTML = `&#10060;` + " Veuillez renseigner un   nom";
     lastNameMsg.style.color = "#FE0000";
     lastNameMsg.style.textShadow = "0px 0px 1px black";
   }
@@ -304,7 +304,7 @@ const validCity = function (inputCity) {
     cityMsg.style.color = "#00B600";
     cityMsg.style.textShadow = "0px 0px 3px black";
   } else {
-    cityMsg.innerHTML = `&#10060;` + " Veuillez renseigner une adresse";
+    cityMsg.innerHTML = `&#10060;` + " Veuillez renseigner une ville";
     cityMsg.style.color = "#FE0000";
     cityMsg.style.textShadow = "0px 0px 1px black";
   }
