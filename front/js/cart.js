@@ -209,17 +209,15 @@ let form = {
   cityForm: document.getElementById("city"),
   emailForm: document.getElementById("email"),
 };
-
+let orderValidation = document.getElementById("order");
 let RegExp = {
   emailRegExp: /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,3}$/i,
   nameRegex: /^[a-zA-Z\-\’]+$/,
-  addressRegex: /^[a-zA-Z0-9\s,'-]*$/,
-  cityRegex: /^([a-zA-Z\u0080-\u024F]+(?:. |-| |'))*[a-zA-Z\u0080-\u024F]*$/,
+  addressRegex:
+    /^[0-9]{1,8}\s+((allée|avenue|av|boulevard|bd|carrefour|car|chemin|che|cours|crs|descente|dsc|domaine|dom|esplanade|esp|grande rue|gr|hameau|ham|lieu-dit|ld|lotissement|lot|montée|mte|passage|pas|place|pl|promenade|pro|parvis|prv|quartier|qua|quai|résidence|res|ruelle|rle|route|rte|rue|villa|vla|village|vlge))\s\w*/iu,
+  cityRegex: /^([a-zA-Z\u0080-\u024F]+(?:. |-| |'))*[a-zA-Z\u0080-\u024F]+$/,
 };
 
-form.emailForm.addEventListener("change", function () {
-  validEmail(this);
-});
 form.firstNameForm.addEventListener("change", function () {
   validFirstName(this);
 });
@@ -232,81 +230,117 @@ form.addressForm.addEventListener("change", function () {
 form.cityForm.addEventListener("change", function () {
   validCity(this);
 });
+form.emailForm.addEventListener("change", function () {
+  validEmail(this);
+});
 
+const validFirstName = function (inputFirstName) {
+  let firstNameMsg = document.getElementById("firstNameErrorMsg");
+  let testFirstName = RegExp.nameRegex.test(inputFirstName.value);
+
+  if (testFirstName == true) {
+    firstNameMsg.innerHTML = `&#9989;` + " OK";
+    firstNameMsg.style.color = "#00B600";
+    firstNameMsg.style.textShadow = "0px 0px 3px black";
+    return true;
+  } else {
+    firstNameMsg.innerHTML = `&#10060;` + " Veuillez renseigner un prénom";
+    firstNameMsg.style.color = "#FE0000";
+    firstNameMsg.style.textShadow = "0px 0px 1px black";
+    return false;
+  }
+};
+const validLastName = function (inputLastName) {
+  let lastNameMsg = document.getElementById("lastNameErrorMsg");
+  let testLastName = RegExp.nameRegex.test(inputLastName.value);
+
+  if (testLastName == true) {
+    lastNameMsg.innerHTML = `&#9989;` + " OK";
+    lastNameMsg.style.color = "#00B600";
+    lastNameMsg.style.textShadow = "0px 0px 3px black";
+    return true;
+  } else {
+    lastNameMsg.innerHTML = `&#10060;` + " Veuillez renseigner un nom";
+    lastNameMsg.style.color = "#FE0000";
+    lastNameMsg.style.textShadow = "0px 0px 1px black";
+    return false;
+  }
+};
+const validAddress = function (inputAddress) {
+  let addressMsg = document.getElementById("addressErrorMsg");
+  let testAddress = RegExp.addressRegex.test(inputAddress.value);
+
+  if (testAddress == true) {
+    addressMsg.innerHTML = `&#9989;` + " OK";
+    addressMsg.style.color = "#00B600";
+    addressMsg.style.textShadow = "0px 0px 3px black";
+    return true;
+  } else {
+    addressMsg.innerHTML =
+      `&#10060;` +
+      " Veuillez renseigner une adresse valide" +
+      "<br />Exemple: 234 rue de la montée interminable";
+    addressMsg.style.color = "#FE0000";
+    addressMsg.style.textShadow = "0px 0px 1px black";
+    return false;
+  }
+};
+const validCity = function (inputCity) {
+  let cityMsg = document.getElementById("cityErrorMsg");
+  let testCity = RegExp.cityRegex.test(inputCity.value);
+
+  if (testCity == true) {
+    cityMsg.innerHTML = `&#9989;` + " OK";
+    cityMsg.style.color = "#00B600";
+    cityMsg.style.textShadow = "0px 0px 3px black";
+    return true;
+  } else {
+    cityMsg.innerHTML = `&#10060;` + " Veuillez renseigner une ville";
+    cityMsg.style.color = "#FE0000";
+    cityMsg.style.textShadow = "0px 0px 1px black";
+    return false;
+  }
+};
 const validEmail = function (inputEmail) {
   let emailMsg = document.getElementById("emailErrorMsg");
-
   let testEmail = RegExp.emailRegExp.test(inputEmail.value);
 
   if (testEmail == true) {
     emailMsg.innerHTML = `&#9989;` + " Email valide";
     emailMsg.style.color = "#00B600";
     emailMsg.style.textShadow = "0px 0px 3px black";
+    return true;
   } else {
     emailMsg.innerHTML =
       `&#10060;` + " Veuillez renseigner une adresse Email valide";
     emailMsg.style.color = "#FE0000";
     emailMsg.style.textShadow = "0px 0px 1px black";
+    return false;
   }
 };
 
-const validFirstName = function (inputFirstName) {
-  let firstNameMsg = document.getElementById("firstNameErrorMsg");
-
-  let testFirstName = RegExp.nameRegex.test(inputFirstName.value);
-  if (testFirstName == true) {
-    firstNameMsg.innerHTML = `&#9989;` + " OK";
-    firstNameMsg.style.color = "#00B600";
-    firstNameMsg.style.textShadow = "0px 0px 3px black";
-  } else {
-    firstNameMsg.innerHTML = `&#10060;` + " Veuillez renseigner un prénom";
-    firstNameMsg.style.color = "#FE0000";
-    firstNameMsg.style.textShadow = "0px 0px 1px black";
+orderValidation.addEventListener("click", function (e) {
+  e.preventDefault();
+  let firstNameConfirmation = validFirstName(form.firstNameForm);
+  let lastNameConfirmation = validLastName(form.lastNameForm);
+  let addressConfirmation = validAddress(form.addressForm);
+  let cityConfirmation = validCity(form.cityForm);
+  let emailConfirmation = validEmail(form.emailForm);
+  if (
+    firstNameConfirmation &&
+    lastNameConfirmation &&
+    addressConfirmation &&
+    cityConfirmation &&
+    emailConfirmation
+  ) {
+    let orderCheck = document.getElementById("order");
+    orderCheck.value = "Commande effectuée !";
+    orderCheck.style.color = "#00B600";
+    orderCheck.style.textShadow = "0px 0px 3px black";
+    setTimeout(function () {
+      orderCheck.value = "Commander !";
+      orderCheck.style.color = "unset";
+      orderCheck.style.textShadow = "unset";
+    }, 750);
   }
-};
-const validLastName = function (inputLastName) {
-  let lastNameMsg = document.getElementById("lastNameErrorMsg");
-
-  let testLastName = RegExp.nameRegex.test(inputLastName.value);
-  console.log("testLastName:", testLastName);
-  if (testLastName == true) {
-    lastNameMsg.innerHTML = `&#9989;` + " OK";
-    lastNameMsg.style.color = "#00B600";
-    lastNameMsg.style.textShadow = "0px 0px 3px black";
-  } else {
-    lastNameMsg.innerHTML = `&#10060;` + " Veuillez renseigner un   nom";
-    lastNameMsg.style.color = "#FE0000";
-    lastNameMsg.style.textShadow = "0px 0px 1px black";
-  }
-};
-
-const validAddress = function (inputAddress) {
-  let addressMsg = document.getElementById("addressErrorMsg");
-
-  let testAddress = RegExp.addressRegex.test(inputAddress.value);
-  if (testAddress == true) {
-    addressMsg.innerHTML = `&#9989;` + " OK";
-    addressMsg.style.color = "#00B600";
-    addressMsg.style.textShadow = "0px 0px 3px black";
-  } else {
-    addressMsg.innerHTML = `&#10060;` + " Veuillez renseigner une adresse";
-    addressMsg.style.color = "#FE0000";
-    addressMsg.style.textShadow = "0px 0px 1px black";
-  }
-};
-
-const validCity = function (inputCity) {
-  let cityMsg = document.getElementById("cityErrorMsg");
-
-  let testCity = RegExp.cityRegex.test(inputCity.value);
-  if (testCity == true) {
-    cityMsg.innerHTML = `&#9989;` + " OK";
-    cityMsg.style.color = "#00B600";
-    cityMsg.style.textShadow = "0px 0px 3px black";
-  } else {
-    cityMsg.innerHTML = `&#10060;` + " Veuillez renseigner une ville";
-    cityMsg.style.color = "#FE0000";
-    cityMsg.style.textShadow = "0px 0px 1px black";
-  }
-};
-// Ecouter la modification de l'email
+});
