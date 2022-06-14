@@ -4,8 +4,11 @@ console.log("fullCart:", fullCart);
 
 // faire un contôle sur la variable fullcart, afin d'afficher un message en cas de panier vide
 if (fullCart === null || fullCart.length <= 0) {
-  document.getElementById("cart__items").innerText =
-    "Votre panier est vide :( ";
+  let emptyCartMessage = document.getElementById("cart__items");
+  emptyCartMessage.innerHTML =
+    "Votre panier est vide, vous pouvez retourner sur notre boutique en <a href='index.html'> cliquant ici </a>";
+  emptyCartMessage.style.fontSize = "1.15em";
+  emptyCartMessage.style.fontWeight = "500";
 } else {
   calculateProductPriceInCart();
   fullCart.forEach((cartProductDetails) => {
@@ -321,26 +324,62 @@ const validEmail = function (inputEmail) {
 
 orderValidation.addEventListener("click", function (e) {
   e.preventDefault();
-  let firstNameConfirmation = validFirstName(form.firstNameForm);
-  let lastNameConfirmation = validLastName(form.lastNameForm);
-  let addressConfirmation = validAddress(form.addressForm);
-  let cityConfirmation = validCity(form.cityForm);
-  let emailConfirmation = validEmail(form.emailForm);
-  if (
-    firstNameConfirmation &&
-    lastNameConfirmation &&
-    addressConfirmation &&
-    cityConfirmation &&
-    emailConfirmation
-  ) {
-    let orderCheck = document.getElementById("order");
-    orderCheck.value = "Commande effectuée !";
-    orderCheck.style.color = "#00B600";
-    orderCheck.style.textShadow = "0px 0px 3px black";
-    setTimeout(function () {
-      orderCheck.value = "Commander !";
-      orderCheck.style.color = "unset";
-      orderCheck.style.textShadow = "unset";
-    }, 750);
+  if (fullCart.length > 0) {
+    let firstNameConfirmation = validFirstName(form.firstNameForm);
+    let lastNameConfirmation = validLastName(form.lastNameForm);
+    let addressConfirmation = validAddress(form.addressForm);
+    let cityConfirmation = validCity(form.cityForm);
+    let emailConfirmation = validEmail(form.emailForm);
+    if (
+      firstNameConfirmation &&
+      lastNameConfirmation &&
+      addressConfirmation &&
+      cityConfirmation &&
+      emailConfirmation
+    ) {
+      let contact = {
+        firstName: document.getElementById("firstName").value,
+        lastName: document.getElementById("lastName").value,
+        address: document.getElementById("address").value,
+        city: document.getElementById("city").value,
+        email: document.getElementById("email").value,
+      };
+
+      let products = [];
+      fullCart.forEach((cartProductDetails) => {
+        products.push(cartProductDetails.productId);
+      });
+      let order = {
+        contact: contact,
+        products: products,
+      };
+      console.log("order:", order);
+      const sendOrder = fetch("http://localhost:3000/api/products/order", {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(order),
+      })
+        .then((res) => res.json())
+
+        .then(function (res) {
+          console.log("res:", res);
+          localStorage.removeItem("product");
+          document.location.href = `confirmation.html?orderid=${res.orderId}`;
+        });
+
+      orderValidation.value = "Commande effectuée !";
+      orderValidation.style.color = "#00B600";
+      orderValidation.style.textShadow = "0px 0px 3px black";
+      setTimeout(function () {
+        orderValidation.value = "Commander !";
+        orderValidation.style.color = "unset";
+        orderValidation.style.textShadow = "unset";
+      }, 750);
+    }
+  } else {
+    alert("votre panier est vide");
   }
 });
