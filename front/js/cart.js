@@ -1,6 +1,5 @@
 // on récupère le local storage
 let fullCart = JSON.parse(localStorage.getItem("product"));
-console.log("fullCart:", fullCart);
 
 // faire un contôle sur la variable fullcart, afin d'afficher un message en cas de panier vide
 if (fullCart === null || fullCart.length <= 0) {
@@ -198,8 +197,6 @@ function removeItem() {
   item.remove();
   calculateProductQuantityInCart();
   calculateProductPriceInCart();
-
-  console.log("item:", item);
 }
 // Faire des recherches sur les expressions régulières(RegExp) en js
 //!!!!  Problème 1 ! la fiche produit disparait après incrémentation de l'article via le modude le selection de quantité

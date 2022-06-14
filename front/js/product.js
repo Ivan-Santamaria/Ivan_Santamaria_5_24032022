@@ -43,7 +43,6 @@ fetch(`http://localhost:3000/api/products/${productId}`)
   .catch((error) => alert(`Erreur lors du chargement de l'API`));
 
 function addToCart(product) {
-  console.log("product:", product);
   // code d'ajout au panier
   // Verifier la quantité entre 1-100
   // Verifier la couleur
@@ -69,12 +68,11 @@ function addToCart(product) {
     if (cart == null) {
       // Initialisation d'un taleaux vide
       cart = [];
-      console.log("test1");
+
       // } else if (cart != null) {
     }
     let findProductInCart = false;
     for (let i = 0; i < cart.length; i++) {
-      console.log("test2");
       if (
         cart[i].productId == product._id &&
         cart[i].productColor == colorSelector.value
