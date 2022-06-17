@@ -1,75 +1,69 @@
-// Recupérer l'identifiant du produit via l'url https://developer.mozilla.org/fr/docs/Web/API/URL/searchParams
-// contacter l'API via fetch en lui passant l'identifiant du produits, afin de récuperer les infos sur le produit
-//http://localhost:3000/api/products/productid
-//cibler chaque éléments (titre, decription , img ...) en injectant l'information à l'interieur de l'élément
-
-// let urlData = new URL(`http://localhost:3000/api/products`);
-// console.log(urlData);
-
+// Création des variables de récupération d'identifiant
 const params = new URLSearchParams(location.search);
 let productId = params.get(`id`);
 
+// Récupération via l'url de l'id du produit sélectionné
 fetch(`http://localhost:3000/api/products/${productId}`)
+  // Demande une réponse au format .json  (fiche produit)
   .then((res) => res.json())
   .then(function (res) {
+    // On donne un nom à notre fiche produit pour plus de lisibilité
     let product = res;
-
-    // console.log("res:", res);
-
+ 
+    // Ciblage et importation des informations produit
     document.getElementById(`description`).innerHTML = product.description;
     document.getElementById(`title`).innerHTML = product.name;
     document.getElementById(`price`).innerHTML = product.price;
 
-    product.colors.forEach((color) => {
-      let colorOptionSelector = document.createElement(`option`);
-      colorOptionSelector.value = color;
-      colorOptionSelector.textContent = color;
-
-      document.getElementById(`colors`).appendChild(colorOptionSelector);
-    });
-
+    // Création des élément d'affichage produits(Image)
     let productImage = document.createElement("img");
     let imageLoc = document.querySelector(`article div`);
     productImage.src = product.imageUrl;
     productImage.alt = product.altTxt;
     imageLoc.appendChild(productImage);
-    // l'afficher
 
+    // Boucle sur le tableau des couleurs du produit
+    product.colors.forEach((color) => {
+      // Création de l'espace de sélection des couleurs (option)
+      let colorOptionSelector = document.createElement(`option`);
+      colorOptionSelector.value = color;
+      colorOptionSelector.textContent = color;
+      // Injection des valeurs du tableau dans le HTML
+      document.getElementById(`colors`).appendChild(colorOptionSelector);
+    });
+
+    // Validation du produit et mise au panier voir fonction Ligne 44
     document.getElementById(`addToCart`).addEventListener("click", function () {
       addToCart(product);
     });
   })
-  // .then( )
+  // En cas d'erreur de contact de l'API un message d'erreur survient sous forme d'alerte
   .catch((error) => alert(`Erreur lors du chargement de l'API`));
 
+// Fonction de condition pour valiadtion l'ajout au panier
 function addToCart(product) {
-  // code d'ajout au panier
-  // Verifier la quantité entre 1-100
-  // Verifier la couleur
-  // console.log(product);
-
+  // Initialisation d'une variable ciblant la zone d'importation des données de couleurs et quantités
   let colorSelector = document.getElementById(`colors`);
   let quantitySelector = document.getElementById(`quantity`);
-  // initialisation d'una variable contenant les valeur de couleurs & quantité ainsi que l'id
+
+  // Initialisation d'une variable contenant les valeurs de couleurs & quantités ainsi que l'id
   let productToCart = {
     productId: product._id,
     productColor: colorSelector.value,
     productQuantity: quantitySelector.value,
   };
-
+  // Condition de selection de couleurs et de quantité minimale et maximale
   if (colorSelector.value == "" || colorSelector.value == undefined) {
     alert("Veuillez sélectionner une couleur disponible!");
   } else if (quantitySelector.value < 1 || quantitySelector.value > 100) {
     alert("Veuillez sélectionner une quantité comprise entre 1 et 100");
   } else {
-    // Récuperation du localStorage
+    // Récupération du localStorage en cas de succes
     let cart = JSON.parse(localStorage.getItem("product"));
     // Vérification si localStorage == vide
     if (cart == null) {
       // Initialisation d'un taleaux vide
       cart = [];
-
-      // } else if (cart != null) {
     }
     let findProductInCart = false;
     for (let i = 0; i < cart.length; i++) {
@@ -96,10 +90,10 @@ function addToCart(product) {
       // Mis à jour du localStorage en ajoutant le produit
       cart.push(productToCart);
     }
-    // consigne :  Boucler sur la variable cart & verifier si l'id & la couleur du produit existe et ajouter la nouvelle quantité
 
     localStorage.setItem("product", JSON.stringify(cart));
 
+    // Création d'un témoin de validation
     document.getElementById("addToCart").innerText =
       "Article(s) ajouté(s) au panier";
     setTimeout(function () {
@@ -107,8 +101,3 @@ function addToCart(product) {
     }, 750);
   }
 }
-
-// Creer une ecoute d'evenement sur le bouton ajouter au panier
-// au clic (Ajouter au panier) verifier si une couleur est selectionée, envoyer une alerte lorsque aucune couleur n'est secelctionée.
-// verifier si la quantité est valide, envoyer une alerte si non-valide
-// En cas de validation couleur/quantité: (recherche utilisation local storage)

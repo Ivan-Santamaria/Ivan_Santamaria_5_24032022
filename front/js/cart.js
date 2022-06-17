@@ -17,7 +17,6 @@ if (fullCart === null || fullCart.length <= 0) {
       // ON recupère la reponse (tableau de produits)
       .then((res) => {
         let product = res;
-        // console.log("product:", product);
 
         let cartItems = document.getElementById("cart__items");
         let cartArticleData = document.createElement("article");
@@ -88,21 +87,26 @@ if (fullCart === null || fullCart.length <= 0) {
 
         updateProductQuantity(
           cartItemQuantitySelection,
-          cartProductDetails.productId
+          cartProductDetails.productId,
+          cartProductDetails.productColor
         );
         calculateProductQuantityInCart();
       });
   });
   //   .catch((error) => alert(`Erreur lors du chargement de l'API`));
 }
-function updateProductQuantity(cartItemQuantitySelection, productId) {
+function updateProductQuantity(
+  cartItemQuantitySelection,
+  productId,
+  productColor
+) {
   cartItemQuantitySelection.addEventListener("change", function () {
-    // console.log(cartItemQuantitySelection.value);
     let productQuantity = cartItemQuantitySelection.value;
     fullCart.forEach((cartProductDetails, key) => {
-      // console.log("key:", key);
-
-      if (cartProductDetails.productId == productId) {
+      if (
+        cartProductDetails.productId == productId &&
+        productColor == cartProductDetails.productColor
+      ) {
         fullCart[key]["productQuantity"] = productQuantity;
         localStorage.setItem("product", JSON.stringify(fullCart));
         fullCart = JSON.parse(localStorage.getItem("product"));
@@ -126,7 +130,6 @@ function calculateProductQuantityInCart() {
 
   // Mise a Jour de la quantité
   totalQuantityInCart.innerHTML = totalProductQuantity;
-  console.log("totalProductQuantity:", totalProductQuantity);
 }
 
 function calculateProductPriceInCart() {
@@ -135,7 +138,6 @@ function calculateProductPriceInCart() {
   // faire un foreach sur fullCart et pour chaque produit dans le panier
   fullCart = JSON.parse(localStorage.getItem("product"));
 
-  console.log("fullCart:", fullCart);
   if (fullCart.length == 0) {
     totalProductPriceInCart.innerHTML = totalProductPrice;
   } else {
@@ -155,7 +157,6 @@ function calculateProductPriceInCart() {
               parseInt(product.price);
           // Affichage du montant total
           totalProductPriceInCart.innerHTML = totalProductPrice;
-          console.log("totalProductPrice:", totalProductPrice);
 
           // Essayer de garder uniquement le resultat final
         });
@@ -171,6 +172,7 @@ function deleteProduct(deleteItem) {
         deleteItem.parentNode.parentNode.parentNode.parentNode;
       let productId = cartItemSelector.getAttribute("data-id");
       let productColor = cartItemSelector.getAttribute("data-color");
+
       fullCart = JSON.parse(localStorage.getItem("product"));
 
       fullCart.forEach((cartProductDetails, key) => {
@@ -181,8 +183,11 @@ function deleteProduct(deleteItem) {
           fullCart.splice(key, 1);
         }
       });
+
       localStorage.setItem("product", JSON.stringify(fullCart));
-      removeItem();
+      cartItemSelector.remove();
+      calculateProductQuantityInCart();
+      calculateProductPriceInCart();
       fullCart = JSON.parse(localStorage.getItem("product"));
       if (fullCart === null || fullCart.length <= 0) {
         document.getElementById("cart__items").innerText =
@@ -192,12 +197,6 @@ function deleteProduct(deleteItem) {
   });
 }
 
-function removeItem() {
-  let item = document.querySelector("article");
-  item.remove();
-  calculateProductQuantityInCart();
-  calculateProductPriceInCart();
-}
 // Faire des recherches sur les expressions régulières(RegExp) en js
 //!!!!  Problème 1 ! la fiche produit disparait après incrémentation de l'article via le modude le selection de quantité
 
@@ -350,7 +349,6 @@ orderValidation.addEventListener("click", function (e) {
         contact: contact,
         products: products,
       };
-      console.log("order:", order);
       const sendOrder = fetch("http://localhost:3000/api/products/order", {
         method: "POST",
         headers: {
@@ -362,7 +360,6 @@ orderValidation.addEventListener("click", function (e) {
         .then((res) => res.json())
 
         .then(function (res) {
-          console.log("res:", res);
           localStorage.removeItem("product");
           document.location.href = `confirmation.html?orderid=${res.orderId}`;
         });
@@ -380,3 +377,8 @@ orderValidation.addEventListener("click", function (e) {
     alert("votre panier est vide");
   }
 });
+
+// Bug du local storage  lors de l'ajout de plusieurs version d'un produit de couleur différente
+// le nombre affiché ne correspond pas a la valeur dans le local storage
+// L'éffacement d'un produit est mal pris en charge
+// Kanap orthosie pour essai
