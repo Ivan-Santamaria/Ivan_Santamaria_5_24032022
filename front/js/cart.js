@@ -1,13 +1,30 @@
-// on récupère le local storage
+// Récupération du local storage et le déclarer dans la variable fullCart
 let fullCart = JSON.parse(localStorage.getItem("product"));
+// On déclare un variable pour le ciblage de la la validation de commande
+let orderValidation = document.getElementById("order");
+// Déclaration de variable pour l'indicateur de panier vide
+const emptyCartMessage = function () {
+  let emptyCartMessageDisplay = document.getElementById("cart__items");
+  emptyCartMessageDisplay.innerHTML =
+    "Votre panier est vide, vous pouvez retourner sur notre boutique en <a href='index.html'> cliquant ici </a>";
+  emptyCartMessageDisplay.style.fontSize = "1.15em";
+  emptyCartMessageDisplay.style.fontWeight = "500";
+  return;
+};
+
+//
+//
+//----------------------------------------------------------------------//
+//---------------------------------------------------------------------//
+//----------------- Mise à jour panier & localStorage ----------------//
+//-------------------------------------------------------------------//
+//------------------------------------------------------------------//
+//
+//
 
 // faire un contôle sur la variable fullcart, afin d'afficher un message en cas de panier vide
 if (fullCart === null || fullCart.length <= 0) {
-  let emptyCartMessage = document.getElementById("cart__items");
-  emptyCartMessage.innerHTML =
-    "Votre panier est vide, vous pouvez retourner sur notre boutique en <a href='index.html'> cliquant ici </a>";
-  emptyCartMessage.style.fontSize = "1.15em";
-  emptyCartMessage.style.fontWeight = "500";
+  emptyCartMessage(emptyCartMessage.return);
 } else {
   calculateProductPriceInCart();
   fullCart.forEach((cartProductDetails) => {
@@ -91,10 +108,22 @@ if (fullCart === null || fullCart.length <= 0) {
           cartProductDetails.productColor
         );
         calculateProductQuantityInCart();
-      });
+      })
+      .catch((error) => alert(`Erreur lors du chargement de l'API`));
   });
-  //   .catch((error) => alert(`Erreur lors du chargement de l'API`));
 }
+
+//
+//
+//----------------------------------------------------------------------//
+//---------------------------------------------------------------------//
+//------------------- Fonction de Mise à jour Panier -----------------//
+//-------------------------------------------------------------------//
+//------------------------------------------------------------------//
+//
+//
+
+// Fonction de mise à jour de quantité du produit
 function updateProductQuantity(
   cartItemQuantitySelection,
   productId,
@@ -114,10 +143,9 @@ function updateProductQuantity(
     });
     calculateProductQuantityInCart();
     calculateProductPriceInCart();
-    //   !!!! Source Problème 1 removeItem();
   });
 }
-
+// Fonction de calcul de produit totaux
 function calculateProductQuantityInCart() {
   let totalProductQuantity = 0;
   let totalQuantityInCart = document.getElementById("totalQuantity");
@@ -131,7 +159,7 @@ function calculateProductQuantityInCart() {
   // Mise a Jour de la quantité
   totalQuantityInCart.innerHTML = totalProductQuantity;
 }
-
+// Fonction de calcul du prix total
 function calculateProductPriceInCart() {
   let totalProductPrice = 0;
   let totalProductPriceInCart = document.getElementById("totalPrice");
@@ -163,7 +191,7 @@ function calculateProductPriceInCart() {
     });
   }
 }
-
+// Fonction de suppression de produit
 function deleteProduct(deleteItem) {
   deleteItem.addEventListener("click", () => {
     let choice = confirm("Souhaitez-vous vraiment supprimer cet article?");
@@ -189,18 +217,26 @@ function deleteProduct(deleteItem) {
       calculateProductQuantityInCart();
       calculateProductPriceInCart();
       fullCart = JSON.parse(localStorage.getItem("product"));
+
       if (fullCart === null || fullCart.length <= 0) {
-        document.getElementById("cart__items").innerText =
-          "Votre panier est vide :( ";
+        emptyCartMessage(emptyCartMessage.return);
+        localStorage.clear();
       }
     }
   });
 }
 
-// Faire des recherches sur les expressions régulières(RegExp) en js
-//!!!!  Problème 1 ! la fiche produit disparait après incrémentation de l'article via le modude le selection de quantité
-
+//
+//
+//----------------------------------------------------------------------//
+//---------------------------------------------------------------------//
 //---------------------------- Formulaire ----------------------------//
+//-------------------------------------------------------------------//
+//------------------------------------------------------------------//
+//
+//
+
+// On cible les élements du formulaire dans le HTML & on déclare tout les éléments dans une variable de type objet
 let form = {
   firstNameForm: document.getElementById("firstName"),
   lastNameForm: document.getElementById("lastName"),
@@ -208,7 +244,8 @@ let form = {
   cityForm: document.getElementById("city"),
   emailForm: document.getElementById("email"),
 };
-let orderValidation = document.getElementById("order");
+
+//  Liste des RegExp déclarés dans un objet
 let RegExp = {
   emailRegExp: /^[A-Z0-9._%+-]+@([A-Z0-9-]+\.)+[A-Z]{2,3}$/i,
   nameRegex: /^[a-zA-Z\-\’]+$/,
@@ -217,6 +254,7 @@ let RegExp = {
   cityRegex: /^([a-zA-Z\u0080-\u024F]+(?:. |-| |'))*[a-zA-Z\u0080-\u024F]+$/,
 };
 
+// Écoute des modifications du formulaire
 form.firstNameForm.addEventListener("change", function () {
   validFirstName(this);
 });
@@ -233,6 +271,7 @@ form.emailForm.addEventListener("change", function () {
   validEmail(this);
 });
 
+// Condition de validation: Prénom
 const validFirstName = function (inputFirstName) {
   let firstNameMsg = document.getElementById("firstNameErrorMsg");
   let testFirstName = RegExp.nameRegex.test(inputFirstName.value);
@@ -249,6 +288,7 @@ const validFirstName = function (inputFirstName) {
     return false;
   }
 };
+// Condition de validation: Nom
 const validLastName = function (inputLastName) {
   let lastNameMsg = document.getElementById("lastNameErrorMsg");
   let testLastName = RegExp.nameRegex.test(inputLastName.value);
@@ -265,6 +305,7 @@ const validLastName = function (inputLastName) {
     return false;
   }
 };
+// Condition de validation: Adresse
 const validAddress = function (inputAddress) {
   let addressMsg = document.getElementById("addressErrorMsg");
   let testAddress = RegExp.addressRegex.test(inputAddress.value);
@@ -284,6 +325,7 @@ const validAddress = function (inputAddress) {
     return false;
   }
 };
+// Condition de validation: Ville
 const validCity = function (inputCity) {
   let cityMsg = document.getElementById("cityErrorMsg");
   let testCity = RegExp.cityRegex.test(inputCity.value);
@@ -300,6 +342,7 @@ const validCity = function (inputCity) {
     return false;
   }
 };
+// Condition de validation: E-mail
 const validEmail = function (inputEmail) {
   let emailMsg = document.getElementById("emailErrorMsg");
   let testEmail = RegExp.emailRegExp.test(inputEmail.value);
@@ -318,6 +361,17 @@ const validEmail = function (inputEmail) {
   }
 };
 
+//
+//
+//----------------------------------------------------------------------//
+//---------------------------------------------------------------------//
+//----------------------------- Validation ---------------------------//
+//-------------------------------------------------------------------//
+//------------------------------------------------------------------//
+//
+//
+
+// Validation de commande
 orderValidation.addEventListener("click", function (e) {
   e.preventDefault();
   if (fullCart.length > 0) {
@@ -377,8 +431,3 @@ orderValidation.addEventListener("click", function (e) {
     alert("votre panier est vide");
   }
 });
-
-// Bug du local storage  lors de l'ajout de plusieurs version d'un produit de couleur différente
-// le nombre affiché ne correspond pas a la valeur dans le local storage
-// L'éffacement d'un produit est mal pris en charge
-// Kanap orthosie pour essai

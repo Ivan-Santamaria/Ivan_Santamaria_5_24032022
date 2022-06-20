@@ -9,7 +9,7 @@ fetch(`http://localhost:3000/api/products/${productId}`)
   .then(function (res) {
     // On donne un nom à notre fiche produit pour plus de lisibilité
     let product = res;
- 
+
     // Ciblage et importation des informations produit
     document.getElementById(`description`).innerHTML = product.description;
     document.getElementById(`title`).innerHTML = product.name;
@@ -32,15 +32,25 @@ fetch(`http://localhost:3000/api/products/${productId}`)
       document.getElementById(`colors`).appendChild(colorOptionSelector);
     });
 
-    // Validation du produit et mise au panier voir fonction Ligne 44
+    // Validation du produit et mise au panier voir fonction Ligne 52
     document.getElementById(`addToCart`).addEventListener("click", function () {
       addToCart(product);
     });
   })
   // En cas d'erreur de contact de l'API un message d'erreur survient sous forme d'alerte
   .catch((error) => alert(`Erreur lors du chargement de l'API`));
+  
+//
+//
+//----------------------------------------------------------------------//
+//---------------------------------------------------------------------//
+//------------------------- Ajout au Panier --------------------------//
+//-------------------------------------------------------------------//
+//------------------------------------------------------------------//
+//
+//
 
-// Fonction de condition pour valiadtion l'ajout au panier
+// Fonction de condition pour validation d'ajout au panier
 function addToCart(product) {
   // Initialisation d'une variable ciblant la zone d'importation des données de couleurs et quantités
   let colorSelector = document.getElementById(`colors`);
@@ -66,6 +76,7 @@ function addToCart(product) {
       cart = [];
     }
     let findProductInCart = false;
+
     for (let i = 0; i < cart.length; i++) {
       if (
         cart[i].productId == product._id &&
