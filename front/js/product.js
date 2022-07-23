@@ -39,7 +39,7 @@ fetch(`http://localhost:3000/api/products/${productId}`)
   })
   // En cas d'erreur de contact de l'API un message d'erreur survient sous forme d'alerte
   .catch((error) => alert(`Erreur lors du chargement de l'API`));
-  
+
 //
 //
 //----------------------------------------------------------------------//

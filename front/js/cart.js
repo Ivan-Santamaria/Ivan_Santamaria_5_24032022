@@ -9,7 +9,6 @@ const emptyCartMessage = function () {
     "Votre panier est vide, vous pouvez retourner sur notre boutique en <a href='index.html'> cliquant ici </a>";
   emptyCartMessageDisplay.style.fontSize = "1.15em";
   emptyCartMessageDisplay.style.fontWeight = "500";
-  return;
 };
 
 //
@@ -23,8 +22,8 @@ const emptyCartMessage = function () {
 //
 
 // faire un contôle sur la variable fullcart, afin d'afficher un message en cas de panier vide
-if (fullCart === null || fullCart.length <= 0) {
-  emptyCartMessage(emptyCartMessage.return);
+if (fullCart === null || fullCart === undefined || fullCart.length === 0) {
+  emptyCartMessage();
 } else {
   calculateProductPriceInCart();
   fullCart.forEach((cartProductDetails) => {
@@ -185,8 +184,6 @@ function calculateProductPriceInCart() {
               parseInt(product.price);
           // Affichage du montant total
           totalProductPriceInCart.innerHTML = totalProductPrice;
-
-          // Essayer de garder uniquement le resultat final
         });
     });
   }
@@ -218,9 +215,10 @@ function deleteProduct(deleteItem) {
       calculateProductPriceInCart();
       fullCart = JSON.parse(localStorage.getItem("product"));
 
-      if (fullCart === null || fullCart.length <= 0) {
-        emptyCartMessage(emptyCartMessage.return);
+      if (fullCart.length === 0) {
         localStorage.clear();
+        emptyCartMessage();
+        return;
       }
     }
   });
@@ -374,7 +372,7 @@ const validEmail = function (inputEmail) {
 // Validation de commande
 orderValidation.addEventListener("click", function (e) {
   e.preventDefault();
-  if (fullCart.length > 0) {
+  if (fullCart.length >= 1) {
     let firstNameConfirmation = validFirstName(form.firstNameForm);
     let lastNameConfirmation = validLastName(form.lastNameForm);
     let addressConfirmation = validAddress(form.addressForm);
@@ -414,10 +412,9 @@ orderValidation.addEventListener("click", function (e) {
         .then((res) => res.json())
 
         .then(function (res) {
-          localStorage.removeItem("product");
           document.location.href = `confirmation.html?orderid=${res.orderId}`;
+          localStorage.clear();
         });
-
       orderValidation.value = "Commande effectuée !";
       orderValidation.style.color = "#00B600";
       orderValidation.style.textShadow = "0px 0px 3px black";
@@ -428,6 +425,7 @@ orderValidation.addEventListener("click", function (e) {
       }, 750);
     }
   } else {
-    alert("votre panier est vide");
+    alert("Votre panier est vide !");
+    return;
   }
 });
