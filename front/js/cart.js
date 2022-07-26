@@ -189,9 +189,11 @@ function calculateProductPriceInCart() {
   }
 }
 // Fonction de suppression de produit
+// Faire une écoute sur le bouton supprimer
 function deleteProduct(deleteItem) {
   deleteItem.addEventListener("click", () => {
     let choice = confirm("Souhaitez-vous vraiment supprimer cet article?");
+    // Si oui, aller chercher l'id et la couleur
     if (choice == true) {
       let cartItemSelector =
         deleteItem.parentNode.parentNode.parentNode.parentNode;
@@ -215,6 +217,7 @@ function deleteProduct(deleteItem) {
       calculateProductPriceInCart();
       fullCart = JSON.parse(localStorage.getItem("product"));
 
+      //Si Aucun produits n'est présent, supprimer le local storage
       if (fullCart.length === 0) {
         localStorage.clear();
         emptyCartMessage();
@@ -368,61 +371,65 @@ const validEmail = function (inputEmail) {
 //------------------------------------------------------------------//
 //
 //
-
 // Validation de commande
 orderValidation.addEventListener("click", function (e) {
   e.preventDefault();
-  if (fullCart.length >= 1) {
-    let firstNameConfirmation = validFirstName(form.firstNameForm);
-    let lastNameConfirmation = validLastName(form.lastNameForm);
-    let addressConfirmation = validAddress(form.addressForm);
-    let cityConfirmation = validCity(form.cityForm);
-    let emailConfirmation = validEmail(form.emailForm);
-    if (
-      firstNameConfirmation &&
-      lastNameConfirmation &&
-      addressConfirmation &&
-      cityConfirmation &&
-      emailConfirmation
-    ) {
-      let contact = {
-        firstName: document.getElementById("firstName").value,
-        lastName: document.getElementById("lastName").value,
-        address: document.getElementById("address").value,
-        city: document.getElementById("city").value,
-        email: document.getElementById("email").value,
-      };
+  if (fullCart != null || fullCart != undefined) {
+    if (fullCart.length >= 1) {
+      let firstNameConfirmation = validFirstName(form.firstNameForm);
+      let lastNameConfirmation = validLastName(form.lastNameForm);
+      let addressConfirmation = validAddress(form.addressForm);
+      let cityConfirmation = validCity(form.cityForm);
+      let emailConfirmation = validEmail(form.emailForm);
+      if (
+        firstNameConfirmation &&
+        lastNameConfirmation &&
+        addressConfirmation &&
+        cityConfirmation &&
+        emailConfirmation
+      ) {
+        let contact = {
+          firstName: document.getElementById("firstName").value,
+          lastName: document.getElementById("lastName").value,
+          address: document.getElementById("address").value,
+          city: document.getElementById("city").value,
+          email: document.getElementById("email").value,
+        };
 
-      let products = [];
-      fullCart.forEach((cartProductDetails) => {
-        products.push(cartProductDetails.productId);
-      });
-      let order = {
-        contact: contact,
-        products: products,
-      };
-      const sendOrder = fetch("http://localhost:3000/api/products/order", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(order),
-      })
-        .then((res) => res.json())
-
-        .then(function (res) {
-          document.location.href = `confirmation.html?orderid=${res.orderId}`;
-          localStorage.clear();
+        let products = [];
+        fullCart.forEach((cartProductDetails) => {
+          products.push(cartProductDetails.productId);
         });
-      orderValidation.value = "Commande effectuée !";
-      orderValidation.style.color = "#00B600";
-      orderValidation.style.textShadow = "0px 0px 3px black";
-      setTimeout(function () {
-        orderValidation.value = "Commander !";
-        orderValidation.style.color = "unset";
-        orderValidation.style.textShadow = "unset";
-      }, 750);
+        let order = {
+          contact: contact,
+          products: products,
+        };
+        const sendOrder = fetch("http://localhost:3000/api/products/order", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(order),
+        })
+          .then((res) => res.json())
+
+          .then(function (res) {
+            document.location.href = `confirmation.html?orderid=${res.orderId}`;
+            localStorage.clear();
+          });
+        orderValidation.value = "Commande effectuée !";
+        orderValidation.style.color = "#00B600";
+        orderValidation.style.textShadow = "0px 0px 3px black";
+        setTimeout(function () {
+          orderValidation.value = "Commander !";
+          orderValidation.style.color = "unset";
+          orderValidation.style.textShadow = "unset";
+        }, 750);
+      }
+    } else {
+      alert("Votre panier est vide !");
+      return;
     }
   } else {
     alert("Votre panier est vide !");

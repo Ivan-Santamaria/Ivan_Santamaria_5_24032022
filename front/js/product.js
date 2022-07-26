@@ -10,7 +10,7 @@ fetch(`http://localhost:3000/api/products/${productId}`)
     // On donne un nom à notre fiche produit pour plus de lisibilité
     let product = res;
 
-    // Ciblage et importation des informations produit
+    // Ciblage et importation des informations produit (Description, nom & prix)
     document.getElementById(`description`).innerHTML = product.description;
     document.getElementById(`title`).innerHTML = product.name;
     document.getElementById(`price`).innerHTML = product.price;
@@ -22,7 +22,7 @@ fetch(`http://localhost:3000/api/products/${productId}`)
     productImage.alt = product.altTxt;
     imageLoc.appendChild(productImage);
 
-    // Boucle sur le tableau des couleurs du produit
+    // Boucle sur le tableau des couleurs du produit permettant la récupération dynamique des informations de couleurs
     product.colors.forEach((color) => {
       // Création de l'espace de sélection des couleurs (option)
       let colorOptionSelector = document.createElement(`option`);
@@ -32,7 +32,7 @@ fetch(`http://localhost:3000/api/products/${productId}`)
       document.getElementById(`colors`).appendChild(colorOptionSelector);
     });
 
-    // Validation du produit et mise au panier voir fonction Ligne 52
+    // Validation du produit et mise au panier voir fonction Ligne 54
     document.getElementById(`addToCart`).addEventListener("click", function () {
       addToCart(product);
     });
@@ -64,28 +64,35 @@ function addToCart(product) {
   };
   // Condition de selection de couleurs et de quantité minimale et maximale
   if (colorSelector.value == "" || colorSelector.value == undefined) {
+    // Si aucune couleur n'est demandé par l'utilisateur un paneau d'alerte lui indiquera la mention suivante:
     alert("Veuillez sélectionner une couleur disponible!");
   } else if (quantitySelector.value < 1 || quantitySelector.value > 100) {
+    // Si aucune quantités n'est demandé par l'utilisateur un paneau d'alerte lui indiquera la mention suivante:
     alert("Veuillez sélectionner une quantité comprise entre 1 et 100");
   } else {
-    // Récupération du localStorage en cas de succes
+    // Récupération du localStorage en cas de succes (couleurs + quantité validées)
     let cart = JSON.parse(localStorage.getItem("product"));
     // Vérification si localStorage == vide
     if (cart == null) {
       // Initialisation d'un taleaux vide
       cart = [];
     }
+
     let findProductInCart = false;
 
+    //On parcourt le tableaux cart (localStorage)
     for (let i = 0; i < cart.length; i++) {
+      // Condition pour verifier si le produit & la couleure existe dans le panier
       if (
         cart[i].productId == product._id &&
         cart[i].productColor == colorSelector.value
       ) {
+        // Condition pour verifier si la quantité existante + la nouvelle quantité ne depasse pas 100
         if (
           parseInt(cart[i].productQuantity) + parseInt(quantitySelector.value) <
           100
         ) {
+          // Incrémenter la quantité du produit dans le panier
           cart[i].productQuantity =
             parseInt(cart[i].productQuantity) +
             parseInt(quantitySelector.value);
@@ -94,6 +101,7 @@ function addToCart(product) {
             "Veuillez ne pas dépasser 100 articles pour la même référence produit"
           );
         }
+        // Mise à jour de la variable pour identifier que le produit à été trouvé dans le panier
         findProductInCart = true;
       }
     }
